@@ -56,6 +56,9 @@
 #include <uORB/SubscriptionMultiArray.hpp>
 #include <uORB/topics/vehicle_status.h>
 
+#include <uORB/topics/ca_trajectory.h>
+#include <modules/mavlink/mavlink/message_definitions/v2.0/custom_messages/mavlink.h>
+
 #include "streams/ACTUATOR_OUTPUT_STATUS.hpp"
 #include "streams/ALTITUDE.hpp"
 #include "streams/ATTITUDE.hpp"
@@ -246,6 +249,66 @@ static_assert(41 == ROTATION_MAX, "Keep MAV_SENSOR_ROTATION and PX4 Rotation in 
 
 static_assert(MAV_SENSOR_ROTATION_CUSTOM == static_cast<MAV_SENSOR_ORIENTATION>(ROTATION_CUSTOM), "Custom Rotation");
 
+// class MavlinkStreamCaTrajectory : public MavlinkStream
+// {
+// public:
+//     const char *get_name() const
+//     {
+//         return MavlinkStreamCaTrajectory::get_name_static();
+//     }
+//     static const char *get_name_static()
+//     {
+//         return "CA_TRAJECTORY";
+//     }
+//     static uint16_t get_id_static()
+//     {
+//         return MAVLINK_MSG_ID_CA_TRAJECTORY;
+//     }
+//     uint16_t get_id()
+//     {
+//         return get_id_static();
+//     }
+//     static MavlinkStream *new_instance(Mavlink *mavlink)
+//     {
+//         return new MavlinkStreamCaTrajectory(mavlink);
+//     }
+//     unsigned get_size()
+//     {
+//         return MAVLINK_MSG_ID_CA_TRAJECTORY_LEN + MAVLINK_NUM_NON_PAYLOAD_BYTES;
+//     }
+
+// private:
+//     uORB::Subscription _sub{ORB_ID(ca_trajectory)};
+
+//     /* do not allow top copying this class */
+//     MavlinkStreamCaTrajectory(MavlinkStreamCaTrajectory &);
+//     MavlinkStreamCaTrajectory& operator = (const MavlinkStreamCaTrajectory &);
+
+// protected:
+//     explicit MavlinkStreamCaTrajectory(Mavlink *mavlink) : MavlinkStream(mavlink)
+//     {}
+
+//     bool send() override
+//     {
+//         struct ca_traj_struct_s _ca_trajectory;    //make sure ca_traj_struct_s is the definition of your uORB topic
+
+//         if (_sub.update(&_ca_trajectory)) {
+//             mavlink_ca_trajectory_t _msg_ca_trajectory;  //make sure mavlink_ca_trajectory_t is the definition of your custom MAVLink message
+
+//             _msg_ca_trajectory.timestamp = _ca_trajectory.timestamp;
+//             _msg_ca_trajectory.time_start_usec = _ca_trajectory.time_start_usec;
+//             _msg_ca_trajectory.time_stop_usec  = _ca_trajectory.time_stop_usec;
+//             _msg_ca_trajectory.coefficients =_ca_trajectory.coefficients;
+//             _msg_ca_trajectory.seq_id = _ca_trajectory.seq_id;
+
+//             mavlink_msg_ca_trajectory_send_struct(_mavlink->get_channel(), &_msg_ca_trajectory);
+
+//             return true;
+//         }
+
+//         return false;
+//     }
+// };
 
 static const StreamListItem streams_list[] = {
 #if defined(HEARTBEAT_HPP)
@@ -511,7 +574,9 @@ static const StreamListItem streams_list[] = {
 #if defined(CURRENT_MODE_HPP)
 	create_stream_list_item<MavlinkStreamCurrentMode>(),
 #endif // CURRENT_MODE_HPP
+	//create_stream_list_item<MavlinkStreamCaTrajectory>(),
 };
+
 
 const char *get_stream_name(const uint16_t msg_id)
 {

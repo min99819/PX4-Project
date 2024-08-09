@@ -63,6 +63,9 @@
 
 #include <lib/drivers/device/Device.hpp> // For DeviceId union
 
+#include <uORB/topics/ca_trajectory.h>
+#include <modules/mavlink/mavlink/message_definitions/v2.0/custom_messages/mavlink.h>
+
 #ifdef CONFIG_NET
 #define MAVLINK_RECEIVER_NET_ADDED_STACK 1360
 #else
